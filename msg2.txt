@@ -1,0 +1,7 @@
+<xml><ToUserName><![CDATA[gh_132ef87f0eb4]]></ToUserName>
+<FromUserName><![CDATA[oVMe5jjn457qgawhKlXacCAy2bqs]]></FromUserName>
+<CreateTime>1357898829</CreateTime>
+<MsgType><![CDATA[voice]]></MsgType>
+<MediaId><![CDATA[XIv0n6wPMbUrdW-iIX3kZ_NsgGQPGkUGkLhB_omAeKgpkTmnpyUZmcAJ0odK3ISt]]></MediaId>
+<MsgId>5832131061832628484</MsgId>
+</xml>
