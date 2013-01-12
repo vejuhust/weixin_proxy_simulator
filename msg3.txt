@@ -1,7 +1,0 @@
-<xml><ToUserName><![CDATA[gh_132ef87f0eb4]]></ToUserName>
-<FromUserName><![CDATA[oVMe5jjn457qgawhKlXacCAy2bqs]]></FromUserName>
-<CreateTime>1357898876</CreateTime>
-<MsgType><![CDATA[image]]></MsgType>
-<PicUrl><![CDATA[http://mmsns.qpic.cn/mmsns/vibxS58YfRezwn4fb8sZsfUSEvPdIYDbQ3eLHty0ZYDJhqvXz7zKhiaQ/0]]></PicUrl>
-<MsgId>5832131263696091399</MsgId>
-</xml>
