@@ -7,6 +7,6 @@ echostr = "hello"
 headers = { 'Content-Type'  : 'text/xml' }
 timeout = 10
 
-#url_website = "http://42.121.3.228/"
-url_website = "http://cq01-hao123-rdtest06.vm.baidu.com:8080/weixin_notice"
+url_website = "http://42.121.3.228/"
+#url_website = "http://cq01-hao123-rdtest06.vm.baidu.com:8080/weixin_notice"
 token = "vej_python_proto"

@@ -16,7 +16,7 @@ import re
 import sys
 import time
 import random
-
+import argparse
 
 #解决中文编码问题
 reload(sys)
@@ -40,22 +40,8 @@ def generate_url(method = 'GET'):
 
 
 
-#微信验证请求
-def weixin_verify():
-    print "[weixin_verify]",
-    #用GET方法提交验证信息
-    request = urllib2.Request(url = generate_url('GET'))
-    try:
-        time_start = time.time()
-        retval = urllib2.urlopen(request, timeout = timeout)
-        time_end = time.time()
-    except urllib2.HTTPError, e:
-        print e
-        return
-    except urllib2.URLError, e:
-        print e
-        return
-    #解析验证结果
+#读取网页结果
+def fetch_content(retval):
     if retval.headers.has_key('content-encoding'):
         fileobj = StringIO.StringIO()
         fileobj.write(url.read())
@@ -64,6 +50,27 @@ def weixin_verify():
         content = gzip_file.read()
     else:
         content = retval.read()
+    return content
+
+
+
+#微信验证请求
+def weixin_verify():
+    print "[weixin_verify] token='%s'," % token,
+    #用GET方法提交验证信息
+    request = urllib2.Request(url = generate_url('GET'))
+    try:
+        time_start = time.time()
+        retval = urllib2.urlopen(request, timeout = timeout)
+        content = fetch_content(retval)
+        time_end = time.time()
+    except urllib2.HTTPError, e:
+        print e
+        return
+    except urllib2.URLError, e:
+        print e
+        return
+    #验证结果
     if echostr == content:
         print "verified. it takes %.6f sec." % (time_end - time_start)
     else:
@@ -103,6 +110,7 @@ def weixin_send_data(data):
     try:
         time_start = time.time()
         retval = urllib2.urlopen(request, timeout = timeout)
+        content = fetch_content(retval)
         time_end = time.time()
     except urllib2.HTTPError, e:
         print e
@@ -111,21 +119,22 @@ def weixin_send_data(data):
         print e
         return
     #处理结果
-    if retval.headers.has_key('content-encoding'):
-        fileobj = StringIO.StringIO()
-        fileobj.write(url.read())
-        fileobj.seek(0)
-        gzip_file = gzip.GzipFile(fileobj=fileobj)
-        content = gzip_file.read()
-    else:
-        content = retval.read()
     print "response received, %d bytes. it takes %.6f sec." % (len(content), time_end - time_start)
     message_processor(content)
 
 
 
 #发送文字消息
-def weixin_send_text(content = "Hello2BizUser"):
+def weixin_send_text(filename, content):
+    if filename != None:
+        try:
+            file = open(filename, 'r')
+            content = file.read()
+            file.close()
+        except:
+            print "error. can't file %s" % filename
+            return
+    print "[weixin_send_text] text content\n%s" % content
     print "[weixin_send_text]",
     data = message_text % (int(time.time()), content)
     weixin_send_data(data)
@@ -156,12 +165,39 @@ def weixin_send_location():
 
 
 
-#MAIN
+#主程序
 if __name__ == '__main__':
-    weixin_verify()
-    weixin_send_text("天蝎")
-    weixin_send_voice()
-    weixin_send_image()
-    weixin_send_location()
+    global url_website
+    global token
+    
+    #设置命令行参数
+    parser = argparse.ArgumentParser(description='a simulator of weixin message server for developers')
+    
+    parser.add_argument('--version', action='version', version="%(prog)s 20130112")
+    parser.add_argument('-u', '--url', dest = 'url', action = 'store', default = url_website, help = "website to be tested (default in config.py)")
+    parser.add_argument('-c', '--check', dest = 'check', action = 'store', default = token, help = "check token (default in config.py)")
+    parser.add_argument('-s', '--skip', dest = 'skip', action = 'store_true', default = False, help = "skip message test")
+    parser.add_argument('-v', '--voice', dest = 'voice', action = 'store_true', default = False, help = "send voice message")
+    parser.add_argument('-i', '--image', dest = 'image', action = 'store_true', default = False, help = "send image message")
+    parser.add_argument('-l', '--location', dest = 'location', action = 'store_true', default = False, help = "send location message")
+    parser.add_argument('-f', '--file', dest = 'filename', action = 'store', default = None, help = "send text from file")
+    parser.add_argument('-t', '--text', dest = 'content', action = 'store', default = "Hello2BizUser", help = "send text directly (default salutatory)")
 
+    #设置全局变量
+    args = parser.parse_args()
+    url_website = args.url
+    token = args.check
+    
+    #测试过程
+    weixin_verify()
+    if args.skip == True:
+        pass
+    elif args.voice == True:
+        weixin_send_voice()
+    elif args.image == True:
+        weixin_send_image()
+    elif args.location == True:
+        weixin_send_location()
+    else:
+        weixin_send_text(args.filename, args.content)
 
