@@ -136,7 +136,7 @@ def weixin_send_text(filename, content):
             return
     print "[weixin_send_text] text content\n%s" % content
     print "[weixin_send_text]",
-    data = message_text % (int(time.time()), content)
+    data = message_text % (openid, int(time.time()), content)
     weixin_send_data(data)
 
 
@@ -144,7 +144,7 @@ def weixin_send_text(filename, content):
 #发送声音消息
 def weixin_send_voice():
     print "[weixin_send_voice]",
-    data = message_voice % int(time.time())
+    data = message_voice % (openid, int(time.time()))
     weixin_send_data(data)
 
 
@@ -152,7 +152,7 @@ def weixin_send_voice():
 #发送图片消息
 def weixin_send_image():
     print "[weixin_send_image]",
-    data = message_image % int(time.time())
+    data = message_image % (openid, int(time.time()))
     weixin_send_data(data)
 
 
@@ -160,7 +160,7 @@ def weixin_send_image():
 #发送坐标消息
 def weixin_send_location():
     print "[weixin_send_location]",
-    data = message_location % int(time.time())
+    data = message_location % (openid, int(time.time()))
     weixin_send_data(data)
 
 
@@ -169,11 +169,12 @@ def weixin_send_location():
 if __name__ == '__main__':
     global url_website
     global token
+    global openid
     
     #设置命令行参数
     parser = argparse.ArgumentParser(description='a simulator of weixin message server for developers')
     
-    parser.add_argument('--version', action='version', version="%(prog)s 20130112")
+    parser.add_argument('--version', action='version', version="%(prog)s 20130315")
     parser.add_argument('-u', '--url', dest = 'url', action = 'store', default = url_website, help = "website to be tested (default in config.py)")
     parser.add_argument('-c', '--check', dest = 'check', action = 'store', default = token, help = "check token (default in config.py)")
     parser.add_argument('-s', '--skip', dest = 'skip', action = 'store_true', default = False, help = "skip message test")
@@ -182,11 +183,13 @@ if __name__ == '__main__':
     parser.add_argument('-l', '--location', dest = 'location', action = 'store_true', default = False, help = "send location message")
     parser.add_argument('-f', '--file', dest = 'filename', action = 'store', default = None, help = "send text from file")
     parser.add_argument('-t', '--text', dest = 'content', action = 'store', default = "Hello2BizUser", help = "send text directly (default salutatory)")
-
+    parser.add_argument('-o', '--openid', dest = 'openid', action = 'store', default = "oVMe5jjn457qgawhKlXacCAy2bqs", help = "openid in message (default ...)")
+    
     #设置全局变量
     args = parser.parse_args()
     url_website = args.url
     token = args.check
+    openid = args.openid
     
     #测试过程
     weixin_verify()
